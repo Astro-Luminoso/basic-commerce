@@ -1,6 +1,7 @@
 package main;
 
 import main.entity.Product;
+import main.service.CommerceSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +19,8 @@ public class Main {
                 new Product("AirPods Pro", 350000, "노이즈 캔슬링 무선 이어폰", 70)
         ));
 
-        System.out.println("[ 실시간 커머스 플랫 - 전자제품 ]");
+        CommerceSystem app = new CommerceSystem(products, sc);
+        app.start();
 
-        for(Product product : products){
-            System.out.printf("%d. %s", products.indexOf(product) + 1, product.toString());
-        }
-
-        System.out.println("0. 종료");
-
-        while(true) {
-            int value = sc.nextInt();
-            if(value == 0) break;
-        }
     }
 }
