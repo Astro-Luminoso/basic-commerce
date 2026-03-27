@@ -47,16 +47,13 @@ public class CommerceSystem {
     }
 
 
-    private int getProduct(String categoryName, List<Product> products) {
+    private int getProductIndex(String categoryName, List<Product> products) {
 
         System.out.println("[ " + categoryName + " 카테고리 ]");
         this.printList(List.copyOf(products));
 
-        int value = this.getOption();
-        if(indexIsInbound(value, products.size()))
-            throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.");
 
-        return value - 1;
+        return this.getIndex(List.copyOf(products));
 
     }
 
@@ -69,18 +66,26 @@ public class CommerceSystem {
 
         return inputValue < 0 || inputValue > collectionLength;
     }
+
+    private int getIndex (List<IterableOptions> lists) {
+        this.printList(lists);
+        int value = this.getOption();
+
+        if (indexIsInbound(value, lists.size()))
+            throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.");
+
+        return value;
+    }
+
     public void start() {
 
+        // Should I keep this??? or Should I pick this away to outside of start method?
         Supplier<Integer> func = () -> {
             System.out.println("[ 실시간 커머스 플랫폼 ]");
-            this.printList(List.copyOf(this.categories));
-            int value = this.getOption();
 
-            if (indexIsInbound(value, this.categories.size()))
-                throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.");
-
-            return value -1;
+            return this.getIndex(List.copyOf(this.categories));
         };
+
 
         while (true){
 
@@ -88,7 +93,7 @@ public class CommerceSystem {
             if (categoryIndex == -1) break;
             Category category = this.categories.get(categoryIndex);
 
-            int productIndex = this.loopMethod(() -> this.getProduct(category.getInfo(), category.getProducts()));
+            int productIndex = this.loopMethod(() -> this.getProductIndex(category.getInfo(), category.getProducts()));
             if (productIndex == -1) continue;
             Product product = category.getProducts().get(productIndex);
 
