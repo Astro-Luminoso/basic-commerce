@@ -23,6 +23,6 @@ public class Product implements IterableOptions {
     @Override
     public String getInfo() {
 
-        return String.format("%-13s|%,12d원| %-20s", this.name, this.price, this.description);
+        return String.format("%-42s|%,12d원| %-20s", this.name, this.price, this.description);
     }
 }
