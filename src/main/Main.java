@@ -1,12 +1,16 @@
-package Main;
+package main;
 
-import Main.entity.Product;
+import main.entity.Product;
+import main.service.CommerceSystem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
 
         List<Product> products = new ArrayList<>(List.of(
                 new Product("Galaxy S25", 1200000, "최신 안드로이드 스마트폰", 50),
@@ -15,8 +19,8 @@ public class Main {
                 new Product("AirPods Pro", 350000, "노이즈 캔슬링 무선 이어폰", 70)
         ));
 
-        for(Product product : products){
-            System.out.printf("%d. %s", products.indexOf(product) + 1, product.toString());
-        }
+        CommerceSystem app = new CommerceSystem(products, sc);
+        app.start();
+
     }
 }
