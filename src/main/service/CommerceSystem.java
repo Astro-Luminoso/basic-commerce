@@ -26,7 +26,7 @@ public class CommerceSystem {
         while(true) {
             try{
                 return actionMethod.get();
-            } catch(InputMismatchException | IndexOutOfBoundsException e) {
+            } catch(NumberFormatException | IndexOutOfBoundsException e) {
 
                 System.err.println(e.getMessage());
                 System.out.println();
@@ -57,7 +57,7 @@ public class CommerceSystem {
 
     private int getOption () {
 
-        return sc.nextInt();
+        return Integer.parseInt(sc.nextLine());
     }
 
     private boolean indexIsInbound (int inputValue, int collectionLength) {
