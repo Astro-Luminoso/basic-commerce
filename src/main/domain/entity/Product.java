@@ -1,6 +1,8 @@
-package main.entity;
+package main.domain.entity;
 
-public class Product {
+import main.domain.IterableOptions;
+
+public class Product implements IterableOptions {
 
 
     private String name;
@@ -19,8 +21,8 @@ public class Product {
 
 
     @Override
-    public String toString(){
+    public String getInfo() {
 
-        return String.format("%-13s|%,12d원| %-20s%n", this.name, this.price, this.description);
+        return String.format("%-13s|%,12d원| %-20s", this.name, this.price, this.description);
     }
 }
