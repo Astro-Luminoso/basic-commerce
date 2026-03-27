@@ -17,7 +17,7 @@ public class Main {
 
         Category electronic = new Category("전자제품", appConfig.getElectronicProducts());
         Category cloths = new Category("의류", appConfig.getClothsProducts());
-        Category foods = new Category("식품", appConfig.getClothsProducts());
+        Category foods = new Category("식품", appConfig.getFoodsProducts());
 
         List<Category> categories = new ArrayList<>(List.of(electronic, cloths, foods));
         CommerceSystem app = new CommerceSystem(categories, sc);
