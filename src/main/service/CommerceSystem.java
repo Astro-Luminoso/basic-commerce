@@ -50,8 +50,6 @@ public class CommerceSystem {
     private int getProductIndex(String categoryName, List<Product> products) {
 
         System.out.println("[ " + categoryName + " 카테고리 ]");
-        this.printList(List.copyOf(products));
-
 
         return this.getIndex(List.copyOf(products));
 
@@ -74,7 +72,7 @@ public class CommerceSystem {
         if (indexIsInbound(value, lists.size()))
             throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.");
 
-        return value;
+        return value -1;
     }
 
     public void start() {
