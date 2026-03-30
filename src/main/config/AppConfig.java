@@ -1,13 +1,14 @@
 package main.config;
 
 import main.domain.entity.Product;
+import main.service.AdminAuthentication;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AppConfig {
 
-
+    
     public List<Product> getElectronicProducts() {
 
         return new ArrayList<>(List.of(
@@ -36,5 +37,10 @@ public class AppConfig {
                 new Product("도드람 직화 돼지곱창", 14900, "믿고 못먹는(?) 도드람 돼지곱창", 300),
                 new Product("초밥 50pcs", 34900, "가성비 하나 없는(?)초밥 50피스", 500)
         ));
+    }
+
+    public AdminAuthentication getAdminAuthentication() {
+
+        return new AdminAuthentication("admin1234");
     }
 }
