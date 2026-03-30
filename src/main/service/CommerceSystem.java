@@ -1,23 +1,24 @@
 package main.service;
 
+import main.domain.entity.Cart;
 import main.domain.entity.Category;
 import main.domain.IterableOptions;
 import main.domain.entity.Product;
 
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
 public class CommerceSystem {
 
-    private List<Category> categories;
-    private Scanner sc;
+    private final List<Category> categories;
+    Cart cart;
+    private final Scanner sc;
 
-
-    public CommerceSystem (List<Category> categories, Scanner sc) {
+    public CommerceSystem (List<Category> categories, Cart cart, Scanner sc) {
 
         this.categories = categories;
+        this.cart = cart;
         this.sc = sc;
     }
 
@@ -31,12 +32,10 @@ public class CommerceSystem {
                 System.err.println(e.getMessage());
                 System.out.println();
             }
-
         }
     }
 
-    private void printList(List<IterableOptions> lists) {
-
+    private void printList(List<? extends IterableOptions> lists) {
         if(!lists.isEmpty()) {
             for (IterableOptions element : lists) {
                 System.out.printf("%d. %s%n", lists.indexOf(element) + 1, element.getInfo());
@@ -46,57 +45,104 @@ public class CommerceSystem {
         System.out.println("0. " + ((lists.getFirst() instanceof Category) ? "종료" : "뒤로가기"));
     }
 
+    private int getOption() {
 
-    private int getProductIndex(String categoryName, List<Product> products) {
+        String value = sc.nextLine();
+        if(!value.matches("\\d+"))
+            throw new NumberFormatException("숫자만 입력해주세요.\n");
 
-        System.out.println("[ " + categoryName + " 카테고리 ]");
-
-        return this.getIndex(List.copyOf(products));
-
+        return Integer.parseInt(value);
     }
 
-    private int getOption () {
+    private int getIndex (int listSize) {
 
-        return Integer.parseInt(sc.nextLine());
-    }
-
-    private boolean indexIsInbound (int inputValue, int collectionLength) {
-
-        return inputValue < 0 || inputValue > collectionLength;
-    }
-
-    private int getIndex (List<IterableOptions> lists) {
-        this.printList(lists);
         int value = this.getOption();
+        if (value < 0 || value > listSize)
+            throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.\n");
 
-        if (indexIsInbound(value, lists.size()))
-            throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.");
-
-        return value -1;
+        return value;
     }
 
-    public void start() {
+    public boolean viewCartDetail() {
 
-        // Should I keep this??? or Should I pick this away to outside of start method?
-        Supplier<Integer> func = () -> {
-            System.out.println("[ 실시간 커머스 플랫폼 ]");
-
-            return this.getIndex(List.copyOf(this.categories));
+        Supplier<Boolean> func = () -> {
+            System.out.println("아래와 같이 주문 하시겠습니까?\n");
+            System.out.println("[ 장바구니 내역 ]");
+            this.printList(cart.getCartList());
+            System.out.println("[ 총 주문 금액 ]");
+            System.out.printf("%,d원%n%n", cart.getTotalPrice());
+            System.out.println("1.주문 확정             0.취소");
+            return this.getOption() == 1;
         };
 
-
-        while (true){
-
-            int categoryIndex = this.loopMethod(func);
-            if (categoryIndex == -1) break;
-            Category category = this.categories.get(categoryIndex);
-
-            int productIndex = this.loopMethod(() -> this.getProductIndex(category.getInfo(), category.getProducts()));
-            if (productIndex == -1) continue;
-            Product product = category.getProducts().get(productIndex);
-
-            System.out.println(product.getInfo());
-        }
+        return this.loopMethod(func);
     }
 
+    public void processCheckout() {
+        System.out.printf("주문이 완료되었습니다! 총 금액: %,d원%n", cart.getTotalPrice());
+        for(Product product : this.cart.getCartList()) {
+            int stockAmount = product.getStockAmount();
+            System.out.printf("%s 재고가 %d개 -> %d로 업데이트 되었습니다.%n", product.getInfo(), stockAmount, stockAmount - 1);
+            product.updateStock(1);
+        }
+
+        cart.clearCart();
+    }
+
+    public void removeOrder() {
+        this.cart.clearCart();
+        System.out.println("주문이 취소되었습니다.\n");
+    }
+
+
+    public void addProductToCart(int categoryIndex, int productIndex) {
+        Supplier<Boolean> func = () -> {
+            System.out.println("위 상품을 장바구니에 추가하시겠습니까?");
+            System.out.println("1.확인             0.취소");
+
+            return this.getOption() == 1;
+        };
+
+        Product product = this.categories.get(categoryIndex).getProducts().get(productIndex);
+        System.out.println(product.getInfo());
+
+        boolean addProduct = this.loopMethod(func);
+
+        if (addProduct) cart.addProduct(product);
+    }
+
+    public int getProduct(int optionValue) {
+
+        Category category = this.categories.get(optionValue);
+        List<Product> products = category.getProducts();
+
+        Supplier<Integer> func = () -> {
+            System.out.println("[ " + category.getInfo() + " 카테고리 ]");
+            this.printList(products);
+            return this.getIndex(products.size());
+        };
+
+        return this.loopMethod(func);
+    }
+
+    public int getMainOption () {
+
+        Supplier<Integer> func = () -> {
+            int optionSize = this.categories.size();
+            System.out.println("[ 실시간 커머스 플랫폼 ]");
+
+            this.printList(this.categories);
+
+            if (this.cart.getCartSize() > 0) {
+                System.out.println("4. 장바구니 확인");
+                System.out.println("5. 주문 취소");
+
+                optionSize += 2;    // input upbound value must be updated due to 2 more options are available
+            }
+
+            return this.getIndex(optionSize);
+        };
+
+        return this.loopMethod(func);
+    }
 }
