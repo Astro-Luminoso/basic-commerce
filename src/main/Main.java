@@ -4,8 +4,10 @@ import main.config.AppConfig;
 import main.domain.entity.Cart;
 import main.domain.entity.Category;
 import main.domain.entity.Product;
+import main.service.AdminAuthentication;
 import main.service.CommerceRunner;
 import main.service.CommerceSystem;
+import main.service.IoController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,6 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-
         AppConfig appConfig = new AppConfig();
 
         Category electronic = new Category("전자제품", appConfig.getElectronicProducts());
@@ -27,9 +28,10 @@ public class Main {
         Cart cart = new Cart(cartList);
 
         CommerceSystem sys = new CommerceSystem(categories, cart, sc);
-        CommerceRunner app = new CommerceRunner(sys);
+        AdminAuthentication auth = appConfig.getAdminAuthentication();
+        IoController cli = new IoController(new Scanner(System.in));
+        CommerceRunner app = new CommerceRunner(sys, auth, cli);
 
         app.start();
-
     }
 }
