@@ -19,6 +19,26 @@ public class Product implements IterableOptions {
         this.stockAmount = stockAmount;
     }
 
+    public String getName() {
+
+        return this.name;
+    }
+
+    public int getStockAmount() {
+
+        return this.stockAmount;
+    }
+
+
+    public int getPrice() {
+
+        return this.price;
+    }
+
+    public void updateStock(int amount) {
+
+        this.stockAmount -= amount;
+    }
 
     @Override
     public String getInfo() {

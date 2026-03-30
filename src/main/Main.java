@@ -1,7 +1,10 @@
 package main;
 
 import main.config.AppConfig;
+import main.domain.entity.Cart;
 import main.domain.entity.Category;
+import main.domain.entity.Product;
+import main.service.CommerceRunner;
 import main.service.CommerceSystem;
 
 import java.util.ArrayList;
@@ -18,9 +21,13 @@ public class Main {
         Category electronic = new Category("전자제품", appConfig.getElectronicProducts());
         Category cloths = new Category("의류", appConfig.getClothsProducts());
         Category foods = new Category("식품", appConfig.getFoodsProducts());
-
         List<Category> categories = new ArrayList<>(List.of(electronic, cloths, foods));
-        CommerceSystem app = new CommerceSystem(categories, sc);
+
+        List<Product> cartList = new ArrayList<>();
+        Cart cart = new Cart(cartList);
+
+        CommerceSystem sys = new CommerceSystem(categories, cart, sc);
+        CommerceRunner app = new CommerceRunner(sys);
 
         app.start();
 
