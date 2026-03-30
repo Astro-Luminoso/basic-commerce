@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class CommerceSystem {
 
     private final List<Category> categories;
-    Cart cart;
+    private final Cart cart;
     private final Scanner sc;
 
     public CommerceSystem (List<Category> categories, Cart cart, Scanner sc) {
@@ -45,22 +45,14 @@ public class CommerceSystem {
         System.out.println("0. " + ((lists.getFirst() instanceof Category) ? "종료" : "뒤로가기"));
     }
 
-    private int getOption() {
+    @Deprecated
+    public int getOption(String regex) {
 
         String value = sc.nextLine();
-        if(!value.matches("\\d+"))
-            throw new NumberFormatException("숫자만 입력해주세요.\n");
+        if(!value.matches(regex))
+            throw new NumberFormatException("올바른 번호를 입력해주세요.\n");
 
         return Integer.parseInt(value);
-    }
-
-    private int getIndex (int listSize) {
-
-        int value = this.getOption();
-        if (value < 0 || value > listSize)
-            throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.\n");
-
-        return value;
     }
 
     public boolean viewCartDetail() {
@@ -72,7 +64,7 @@ public class CommerceSystem {
             System.out.println("[ 총 주문 금액 ]");
             System.out.printf("%,d원%n%n", cart.getTotalPrice());
             System.out.println("1.주문 확정             0.취소");
-            return this.getOption() == 1;
+            return this.getOption("0|1") == 1;
         };
 
         return this.loopMethod(func);
@@ -100,7 +92,7 @@ public class CommerceSystem {
             System.out.println("위 상품을 장바구니에 추가하시겠습니까?");
             System.out.println("1.확인             0.취소");
 
-            return this.getOption() == 1;
+            return this.getOption("0|1") == 1;
         };
 
         Product product = this.categories.get(categoryIndex).getProducts().get(productIndex);
@@ -119,7 +111,8 @@ public class CommerceSystem {
         Supplier<Integer> func = () -> {
             System.out.println("[ " + category.getInfo() + " 카테고리 ]");
             this.printList(products);
-            return this.getIndex(products.size());
+            String acceptableRange = String.format("[0-%d]", products.size());
+            return this.getOption(acceptableRange);
         };
 
         return this.loopMethod(func);
@@ -128,10 +121,10 @@ public class CommerceSystem {
     public int getMainOption () {
 
         Supplier<Integer> func = () -> {
-            int optionSize = this.categories.size();
             System.out.println("[ 실시간 커머스 플랫폼 ]");
 
             this.printList(this.categories);
+            int optionSize = this.categories.size();
 
             if (this.cart.getCartSize() > 0) {
                 System.out.println("4. 장바구니 확인");
@@ -140,7 +133,9 @@ public class CommerceSystem {
                 optionSize += 2;    // input upbound value must be updated due to 2 more options are available
             }
 
-            return this.getIndex(optionSize);
+            System.out.println("6. 관리자 모드");
+            String acceptableRange = String.format("[0-%d]", ++optionSize); //add 1 for admin option
+            return this.getOption(acceptableRange);
         };
 
         return this.loopMethod(func);
