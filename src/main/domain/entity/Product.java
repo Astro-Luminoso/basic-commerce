@@ -1,6 +1,7 @@
 package main.domain.entity;
 
 import main.domain.IterableOptions;
+import main.dto.NewProductDetail;
 
 public class Product implements IterableOptions {
 
@@ -11,7 +12,7 @@ public class Product implements IterableOptions {
     private int stockAmount;
 
 
-    public Product (String name, int price, String description, int stockAmount) {
+    public Product(String name, int price, String description, int stockAmount) {
 
         this.name = name;
         this.price = price;
@@ -35,9 +36,22 @@ public class Product implements IterableOptions {
         return this.price;
     }
 
+    public String getDescription() {
+
+        return this.description;
+    }
+
     public void updateStock(int amount) {
 
         this.stockAmount -= amount;
+    }
+
+    public void update(NewProductDetail detail) {
+
+        this.name = detail.name();
+        this.price = detail.price();
+        this.description = detail.description();
+        this.stockAmount = detail.stockAmount();
     }
 
     @Override

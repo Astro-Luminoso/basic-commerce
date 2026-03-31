@@ -1,106 +1,130 @@
 package main.service;
 
 
+import main.domain.entity.Cart;
 import main.domain.entity.Category;
 import main.domain.entity.Product;
 import main.dto.NewProductDetail;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class CommerceRunner {
 
     private final CommerceSystem sys;
     private final AdminAuthentication auth;
-    private final IoController cli;
+    private final IoController io;
 
-    public CommerceRunner (CommerceSystem sys, AdminAuthentication auth, IoController cli) {
+    public CommerceRunner(CommerceSystem sys, AdminAuthentication auth, IoController io) {
 
         this.sys = sys;
         this.auth = auth;
-        this.cli = cli;
+        this.io = io;
     }
 
     public int getProduct(int optionValue) {
 
-        Category category = this.category.get(optionValue);
-        List<Product> products = category.getProducts();
+        Category category = sys.getCategoriesList().get(optionValue);   // optionValue is ordinal number not index number
 
-        Supplier<Integer> func = () -> {
-            System.out.println("[ " + category.getInfo() + " 카테고리 ]");
-            cli.printList(products);
-            String acceptableRange = String.format("[0-%d]", products.size());
-            return this.getOption(acceptableRange);
-        };
-
-        return this.loopMethod(func);
+        return io.getProductOption(category.getInfo(), category.getProducts());
     }
 
-    private boolean adminLogin () {
+    public void addProductToCart(int optionValue) {
+        int productIndex = this.getProduct(--optionValue) - 1;   // optionValue and productIndex is ordinal number
+        Product product = sys.getProduct(optionValue, productIndex);
+        boolean addToCart = io.processAddToCart(product.getInfo(), product.getName());
+        if (!addToCart) return;
+        sys.addProductToCart(product);
+    }
+
+    public boolean viewCartDetail() {
+
+        Cart cart = sys.getCart();
+
+        return io.processCheckout(cart.getTotalPrice(), cart.getCartList());
+    }
+
+    public boolean adminLogin() {
         boolean isLoggedIn;
         short chancePoint = 3;
         do {
-            String pwd = cli.adminAuthorization();
+            String pwd = io.adminAuthorization();
             isLoggedIn = auth.isAuthenticated(pwd);
-            cli.isAuthorised(isLoggedIn, --chancePoint); // chance point is used after the login attempt
+            io.isAuthorised(isLoggedIn, --chancePoint); // chance point is used after the login attempt
 
-        } while(!isLoggedIn && chancePoint != 0);
+        } while (!isLoggedIn && chancePoint != 0);
 
         return isLoggedIn;
     }
 
-    private void addProductDetail() {
+    public void addProductDetail() {
         List<Category> categories = sys.getCategoriesList();
-        int categoryIndex = sys.loopMethod(() -> cli.getCategory(categories));
+        int categoryIndex = io.getCategory(categories);
         if (categoryIndex == 0) return; // move backward if categoryIndex is 0
         String categoryName = categories.get(--categoryIndex).getInfo();   // categoryIndex is ordinal number not index number
-        NewProductDetail productDetail = cli.addProductDetail(categoryName);
-        boolean isUnique = sys.inspectProductDuplication(categoryIndex, productDetail.name());
-        cli.printDuplicationResult(isUnique);
-        if (!isUnique) return;
-        sys.addProductDetail(categoryIndex, productDetail);
+        NewProductDetail productDetail = io.addProductDetail(categoryName);
+        boolean isUnique = sys.addProductDetail(categoryIndex, productDetail);
+        io.printDuplicationResult(isUnique);
+    }
+
+    private void editProductDetail() {
+        try {
+            String productName = io.getProductName();
+            Product product = sys.getProduct(productName);
+            int editOption = io.getEditOption(product.getInfo());
+            NewProductDetail productDetail = io.editProductDetail(editOption, product);
+            sys.updateProduct(product, productDetail);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private void removeProduct() {
+        try {
+            String productName = io.getProductName();
+            Product product = sys.getProduct(productName);
+            boolean confirmRemove = io.checkRemoveProduct(product.getInfo());
+            if (!confirmRemove) return;
+            sys.removeProduct(product);
+            io.confirmRemoveProduct(productName);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+        }
+
+
     }
 
     private void adminOption(int optionValue) {
 
         switch (optionValue) {
-            case 0:
-                return;
-            case 1:
-                this.addProductDetail();
-                break;
-            case 2:
-                //TODO: Edit Product Detail
-                break;
-            case 3:
-                //TODO: Remove Product Detail
-                break;
-            case 4:
-                // TODO: List Product Detail
-                break;
-            default:
-                break;
-
+            case 1 -> this.addProductDetail();
+            case 2 -> this.editProductDetail();
+            case 3 -> this.removeProduct();
+            case 4 -> this.viewAllProduct();
         }
     }
 
     private void navigateOption(int optionValue) {
-        switch (optionValue){
+        switch (optionValue) {
             case 1, 2, 3:
-                int productIndex = sys.getProduct(--optionValue) - 1;   // optionValue is ordinal number
-                sys.addProductToCart(optionValue, productIndex);
+                this.addProductToCart(optionValue);
                 break;
             case 4:
-                boolean proceedCheckout = sys.viewCartDetail();
-                if (proceedCheckout) sys.processCheckout();
+                boolean proceedCheckout = this.viewCartDetail();
+                if (proceedCheckout) {
+                    io.confirmOrder(sys.getCart().getTotalPrice(), sys.getCart().getCartList());
+                    sys.processCheckout();
+                }
                 break;
             case 5:
                 sys.removeOrder();
+                io.confirmRemoveOrder();
                 break;
             case 6:
                 boolean admin = this.adminLogin();
                 if (admin) {
-                    int adminOptionValue = sys.loopMethod(()-> cli.getIntValue("^[0-4]$"));
+                    // TODO: update print feature
+                    int adminOptionValue = io.getIntValue("^[0-4]$");
+                    if (adminOptionValue == 0) return; // move backward if adminOptionValue is 0
                     this.adminOption(adminOptionValue);
                 }
                 break;
@@ -109,11 +133,10 @@ public class CommerceRunner {
         }
     }
 
-
     public void start() {
 
-        while (true){
-            int mainOption = sys.getMainOption();
+        while (true) {
+            int mainOption = io.getMainOption(sys.getCategoriesList(), sys.getCart().getCartSize());
             if (mainOption == 0) break;
             this.navigateOption(mainOption);
         }
