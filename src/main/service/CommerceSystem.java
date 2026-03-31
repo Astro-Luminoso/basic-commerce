@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public class CommerceSystem {
 
     private final List<Category> categories;
-    private final Cart cart
+    private final Cart cart;
 
     public CommerceSystem (List<Category> categories, Cart cart) {
 

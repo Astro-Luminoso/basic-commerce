@@ -23,7 +23,7 @@ public class CommerceRunner {
 
     public int getProduct(int optionValue) {
 
-        Category category = this.cate.get(optionValue);
+        Category category = this.category.get(optionValue);
         List<Product> products = category.getProducts();
 
         Supplier<Integer> func = () -> {
