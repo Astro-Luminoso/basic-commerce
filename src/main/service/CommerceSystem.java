@@ -13,14 +13,12 @@ import java.util.function.Supplier;
 public class CommerceSystem {
 
     private final List<Category> categories;
-    private final Cart cart;
-    private final Scanner sc;
+    private final Cart cart
 
-    public CommerceSystem (List<Category> categories, Cart cart, Scanner sc) {
+    public CommerceSystem (List<Category> categories, Cart cart) {
 
         this.categories = categories;
         this.cart = cart;
-        this.sc = sc;
     }
 
     public <T> T loopMethod(Supplier<T> actionMethod) {
@@ -34,16 +32,6 @@ public class CommerceSystem {
                 System.out.println();
             }
         }
-    }
-
-    private void printList(List<? extends IterableOptions> lists) {
-        if(!lists.isEmpty()) {
-            for (IterableOptions element : lists) {
-                System.out.printf("%d. %s%n", lists.indexOf(element) + 1, element.getInfo());
-            }
-        }
-
-        System.out.println("0. " + ((lists.getFirst() instanceof Category) ? "종료" : "뒤로가기"));
     }
 
     public boolean inspectProductDuplication(int index, String productName) {
@@ -67,16 +55,6 @@ public class CommerceSystem {
     public List<Category> getCategoriesList() {
 
         return this.categories;
-    }
-
-    @Deprecated
-    public int getOption(String regex) {
-
-        String value = sc.nextLine();
-        if(!value.matches(regex))
-            throw new NumberFormatException("올바른 번호를 입력해주세요.\n");
-
-        return Integer.parseInt(value);
     }
 
     public boolean viewCartDetail() {
@@ -125,21 +103,6 @@ public class CommerceSystem {
         boolean addProduct = this.loopMethod(func);
 
         if (addProduct) cart.addProduct(product);
-    }
-
-    public int getProduct(int optionValue) {
-
-        Category category = this.categories.get(optionValue);
-        List<Product> products = category.getProducts();
-
-        Supplier<Integer> func = () -> {
-            System.out.println("[ " + category.getInfo() + " 카테고리 ]");
-            this.printList(products);
-            String acceptableRange = String.format("[0-%d]", products.size());
-            return this.getOption(acceptableRange);
-        };
-
-        return this.loopMethod(func);
     }
 
     public int getMainOption () {

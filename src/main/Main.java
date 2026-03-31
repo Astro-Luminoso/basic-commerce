@@ -15,8 +15,6 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
-        Scanner sc = new Scanner(System.in);
         AppConfig appConfig = new AppConfig();
 
         Category electronic = new Category("전자제품", appConfig.getElectronicProducts());
@@ -27,7 +25,7 @@ public class Main {
         List<Product> cartList = new ArrayList<>();
         Cart cart = new Cart(cartList);
 
-        CommerceSystem sys = new CommerceSystem(categories, cart, sc);
+        CommerceSystem sys = new CommerceSystem(categories, cart);
         AdminAuthentication auth = appConfig.getAdminAuthentication();
         IoController cli = new IoController(new Scanner(System.in));
         CommerceRunner app = new CommerceRunner(sys, auth, cli);
