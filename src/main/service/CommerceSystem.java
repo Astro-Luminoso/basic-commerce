@@ -4,6 +4,7 @@ import main.domain.entity.Cart;
 import main.domain.entity.Category;
 import main.domain.IterableOptions;
 import main.domain.entity.Product;
+import main.dto.NewProductDetail;
 
 import java.util.List;
 import java.util.Scanner;
@@ -22,7 +23,7 @@ public class CommerceSystem {
         this.sc = sc;
     }
 
-    private <T> T loopMethod(Supplier<T> actionMethod) {
+    public <T> T loopMethod(Supplier<T> actionMethod) {
 
         while(true) {
             try{
@@ -43,6 +44,29 @@ public class CommerceSystem {
         }
 
         System.out.println("0. " + ((lists.getFirst() instanceof Category) ? "종료" : "뒤로가기"));
+    }
+
+    public boolean inspectProductDuplication(int index, String productName) {
+
+        List<Product> products = categories.get(index).getProducts();
+
+        return products.stream().noneMatch(product -> product.getName().equals(productName));
+    }
+
+    public void addProductDetail(int index, NewProductDetail productDetail) {
+
+        List<Product> products = categories.get(index).getProducts();
+        products.add(
+                new Product(
+                productDetail.name(),
+                productDetail.price(),
+                productDetail.description(),
+                productDetail.stockAmount()));
+    }
+
+    public List<Category> getCategoriesList() {
+
+        return this.categories;
     }
 
     @Deprecated
