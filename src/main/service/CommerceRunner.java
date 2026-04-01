@@ -89,8 +89,11 @@ public class CommerceRunner {
         } catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());
         }
+    }
 
+    private void viewAllProduct() {
 
+        sys.getCategoriesList().forEach(category -> io.getProductOption(category.getInfo(), category.getProducts()));
     }
 
     private void adminOption(int optionValue) {
