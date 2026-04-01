@@ -55,14 +55,15 @@ public class IoController {
             this.printList(categories);
             int optionSize = categories.size();
             if (cartSize > 0) {
-                System.out.println("4. 장바구니 확인");
-                System.out.println("5. 주문 취소");
-                optionSize += 2;    // input upbound value must be updated due to 2 more options are available
+                // input upbound value must be updated due to 2 more options are available
+                System.out.printf("%d. 장바구니 확인%n", ++optionSize);
+                System.out.printf("%d. 주문 취소%n", ++optionSize);
+
             }
-            System.out.println("6. 관리자 모드");
+            System.out.printf("%d. 관리자 모드%n", ++optionSize);
             System.out.println("0. 종료");
 
-            return this.getIntValue(String.format("^[0-%d]|6$", optionSize)); //add 1 for admin option
+            return this.getIntValue(String.format("^[0-%d]$", optionSize));
         };
 
         return this.loopMethod(func);
