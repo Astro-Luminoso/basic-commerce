@@ -156,7 +156,7 @@ public class IoController {
 
         } else {
             System.err.println("비밀번호가 틀렸습니다. "
-                    + ((chanceLeft == 0) ? "\n로그인 시도가 3회 실패하여 메인매뉴로 돌아갑니다.\n" : "다시 입력해주세요.\n")
+                    + ((chanceLeft == 0) ? "\n로그인 시도가 3회 실패하여 메인메뉴로 돌아갑니다.\n" : "다시 입력해주세요.\n")
             );
         }
     }
