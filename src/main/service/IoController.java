@@ -220,7 +220,7 @@ public class IoController {
             };
             case 3 -> func = () -> {
                 System.out.printf("현재 수량: %d%n", product.getStockAmount());
-                System.out.print("새로운 가격을 입력해 주세요: ");
+                System.out.print("새로운 수량을 입력해 주세요: ");
                 int newStockAmount = this.getIntValue("^\\d+$");
                 System.out.printf("%s의 수량이 %,d → %,d으로 수정되었습니다.%n", product.getName(), product.getStockAmount(), newStockAmount);
                 return new NewProductDetail(product.getName(), product.getPrice(), product.getDescription(), newStockAmount);
