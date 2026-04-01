@@ -72,6 +72,7 @@ public class CommerceRunner {
             String productName = io.getProductName();
             Product product = sys.getProduct(productName);
             int editOption = io.getEditOption(product.getInfo());
+            if (editOption == 0) return;
             NewProductDetail productDetail = io.editProductDetail(editOption, product);
             sys.updateProduct(product, productDetail);
         } catch (IllegalArgumentException e) {
