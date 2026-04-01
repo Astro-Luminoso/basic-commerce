@@ -28,22 +28,25 @@ public class IoController {
         }
     }
 
-    public void printList(List<? extends IterableOptions> lists) {
+    private void printList(List<? extends IterableOptions> lists) {
         if (!lists.isEmpty()) {
             for (IterableOptions element : lists) {
                 System.out.printf("%d. %s%n", lists.indexOf(element) + 1, element.getInfo());
             }
         }
-
-        System.out.println("0. " + ((lists.getFirst() instanceof Category) ? "종료" : "뒤로가기"));
     }
 
-    public int getIntValue(String regex) {
+    private int getIntValue(String regex) {
         String value = sc.nextLine();
         if (!value.matches(regex))
             throw new NumberFormatException("올바른 번호를 입력해주세요.\n");
 
         return Integer.parseInt(value);
+    }
+
+    public void printProductWithCategoryName(String categoryName, List<Product> products) {
+        System.out.printf("%n[ %s 카테고리 ]%n", categoryName);
+        this.printList(products);
     }
 
     public int getMainOption(List<Category> categories, int cartSize) {
@@ -57,8 +60,9 @@ public class IoController {
                 optionSize += 2;    // input upbound value must be updated due to 2 more options are available
             }
             System.out.println("6. 관리자 모드");
+            System.out.println("0. 종료");
 
-            return this.getIntValue(String.format("[0-%d]", ++optionSize)); //add 1 for admin option
+            return this.getIntValue(String.format("^[0-%d]|6$", optionSize)); //add 1 for admin option
         };
 
         return this.loopMethod(func);
@@ -66,8 +70,8 @@ public class IoController {
 
     public int getProductOption(String categoryName, List<Product> products) {
         Supplier<Integer> func = () -> {
-            System.out.printf("[ %s 카테고리 ]%n", categoryName);
-            this.printList(products);
+            this.printProductWithCategoryName(categoryName, products);
+            System.out.println("0. 뒤로가기");
             return this.getIntValue(String.format("^[0-%d]$", products.size()));
         };
 
@@ -90,7 +94,6 @@ public class IoController {
 
         return result;
     }
-
 
     public boolean processCheckout(int totalPrice, List<Product> cartList) {
         Supplier<Boolean> func = () -> {
@@ -118,12 +121,22 @@ public class IoController {
         System.out.println("주문이 취소되었습니다.");
     }
 
-
     public int getCategory(List<Category> categories) {
         Supplier<Integer> func = () -> {
             System.out.println("카테고리를 선택해주세요: ");
             this.printList(categories);
+            System.out.println("0. 뒤로가기");
             return this.getIntValue(String.format("^[0-%d]", categories.size()));
+        };
+
+        return this.loopMethod(func);
+    }
+
+    public int printAdminOption() {
+        Supplier<Integer> func = () -> {
+            System.out.println("\n[ 관리자 모드 ]\n1. 상품 추가\n2. 상품 수정\n3. 상품 삭제\n4. 전체 상품 조회\n0. 뒤로가기");
+
+            return this.getIntValue("^[0-4]$");
         };
 
         return this.loopMethod(func);
@@ -138,11 +151,11 @@ public class IoController {
     public void isAuthorised(boolean isLoggedIn, short chanceLeft) {
 
         if (isLoggedIn) {
-            System.out.println("관리자 로그인 성공!\n");
+            System.out.println("관리자 로그인 성공!");
 
         } else {
-            System.err.println("비밀번호가 틀렸습니다. 다시 입력해주세요.\n"
-                    + ((chanceLeft == 0) ? "로그인 시도가 3회 실패하여 메인매뉴로 돌아갑니다.\n" : "")
+            System.err.println("비밀번호가 틀렸습니다. "
+                    + ((chanceLeft == 0) ? "\n로그인 시도가 3회 실패하여 메인매뉴로 돌아갑니다.\n" : "다시 입력해주세요.\n")
             );
         }
     }

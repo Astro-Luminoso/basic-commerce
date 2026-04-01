@@ -21,26 +21,27 @@ public class CommerceRunner {
         this.io = io;
     }
 
-    public int getProduct(int optionValue) {
-
-        Category category = sys.getCategoriesList().get(optionValue);   // optionValue is ordinal number not index number
-
-        return io.getProductOption(category.getInfo(), category.getProducts());
-    }
-
-    public void addProductToCart(int optionValue) {
-        int productIndex = this.getProduct(--optionValue) - 1;   // optionValue and productIndex is ordinal number
-        Product product = sys.getProduct(optionValue, productIndex);
+    public void addCartSequence(int optionValue) {
+        Category category = sys.getCategoriesList().get(--optionValue);
+        int productIndex = io.getProductOption(category.getInfo(), category.getProducts()); // optionValue and productIndex is ordinal number
+        if (productIndex == 0) return;
+        Product product = sys.getProduct(optionValue, --productIndex);
         boolean addToCart = io.processAddToCart(product.getInfo(), product.getName());
-        if (!addToCart) return;
-        sys.addProductToCart(product);
+        if (addToCart) sys.addProductToCart(product);
     }
 
-    public boolean viewCartDetail() {
-
+    public void checkoutSequence() {
         Cart cart = sys.getCart();
+        boolean proceedCheckout = io.processCheckout(cart.getTotalPrice(), cart.getCartList());
+        if (proceedCheckout) {
+            io.confirmOrder(sys.getCart().getTotalPrice(), sys.getCart().getCartList());
+            sys.processCheckout();
+        }
+    }
 
-        return io.processCheckout(cart.getTotalPrice(), cart.getCartList());
+    public void removeCartSequence() {
+        sys.removeOrder();
+        io.confirmRemoveOrder();
     }
 
     public boolean adminLogin() {
@@ -93,7 +94,17 @@ public class CommerceRunner {
 
     private void viewAllProduct() {
 
-        sys.getCategoriesList().forEach(category -> io.getProductOption(category.getInfo(), category.getProducts()));
+        sys.getCategoriesList().forEach(category -> io.printProductWithCategoryName(category.getInfo(), category.getProducts()));
+    }
+
+    private void adminSequence() {
+        boolean admin = this.adminLogin();
+        if (!admin) return;
+        while (true) {
+            int adminOptionValue = io.printAdminOption();
+            if (adminOptionValue == 0) break; // move backward if adminOptionValue is 0
+            this.adminOption(adminOptionValue);
+        }
     }
 
     private void adminOption(int optionValue) {
@@ -108,31 +119,11 @@ public class CommerceRunner {
 
     private void navigateOption(int optionValue) {
         switch (optionValue) {
-            case 1, 2, 3:
-                this.addProductToCart(optionValue);
-                break;
-            case 4:
-                boolean proceedCheckout = this.viewCartDetail();
-                if (proceedCheckout) {
-                    io.confirmOrder(sys.getCart().getTotalPrice(), sys.getCart().getCartList());
-                    sys.processCheckout();
-                }
-                break;
-            case 5:
-                sys.removeOrder();
-                io.confirmRemoveOrder();
-                break;
-            case 6:
-                boolean admin = this.adminLogin();
-                if (admin) {
-                    // TODO: update print feature
-                    int adminOptionValue = io.getIntValue("^[0-4]$");
-                    if (adminOptionValue == 0) return; // move backward if adminOptionValue is 0
-                    this.adminOption(adminOptionValue);
-                }
-                break;
-            default:
-                throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.\n");
+            case 1, 2, 3 -> this.addCartSequence(optionValue);
+            case 4 -> this.checkoutSequence();
+            case 5 -> this.removeCartSequence();
+            case 6 -> this.adminSequence();
+            default -> throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.\n");
         }
     }
 

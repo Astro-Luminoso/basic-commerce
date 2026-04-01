@@ -23,11 +23,6 @@ public class CommerceSystem {
         return this.categories;
     }
 
-    public List<Product> getProductListFromCategory(int index) {
-
-        return this.categories.get(index).getProducts();
-    }
-
     public Cart getCart() {
         return this.cart;
     }
