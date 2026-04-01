@@ -30,8 +30,8 @@ public class IoController {
 
     private void printList(List<? extends IterableOptions> lists) {
         if (!lists.isEmpty()) {
-            for (IterableOptions element : lists) {
-                System.out.printf("%d. %s%n", lists.indexOf(element) + 1, element.getInfo());
+            for (int i =0; i<lists.size(); i++) {
+                System.out.printf("%d. %s%n", i + 1, lists.get(i).getInfo());
             }
         }
     }
