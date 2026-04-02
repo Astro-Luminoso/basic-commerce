@@ -4,6 +4,9 @@ import main.domain.IterableOptions;
 
 import java.util.List;
 
+/**
+ * 재품(Product)을 카테고리별로 분리하고 관리하기 위한 메소드
+ */
 public class Category implements IterableOptions {
 
     private final String categoryName;

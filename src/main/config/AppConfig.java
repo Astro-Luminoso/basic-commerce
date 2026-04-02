@@ -1,13 +1,22 @@
 package main.config;
 
 import main.domain.entity.Product;
+import main.service.AdminAuthentication;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 앱 실행하기 위한 설정 클래스
+ */
 public class AppConfig {
 
-
+    /**
+     * 리스트 형태의 전자제품 상품들을 반환
+     * 프로그램 시작 단계에서 호출되어서 사용되어야 함
+     *
+     * @return 리스트 형태의 전자제품 상품들
+     */
     public List<Product> getElectronicProducts() {
 
         return new ArrayList<>(List.of(
@@ -18,6 +27,12 @@ public class AppConfig {
         ));
     }
 
+    /**
+     * 리스트 형태의 의류 상품들을 반환
+     * 프로그램 시작 단계에서 호출되어서 사용되어야 함
+     *
+     * @return 리스트 형태의 의류 상품들
+     */
     public List<Product> getClothsProducts() {
 
         return new ArrayList<>(List.of(
@@ -29,6 +44,12 @@ public class AppConfig {
         ));
     }
 
+    /**
+     * 리스트 형태의 식품 상품들을 반환
+     * 프로그램 시작 단계에서 호출되어서 사용되어야 함
+     *
+     * @return 리스트 형태의 식품 상품들
+     */
     public List<Product> getFoodsProducts() {
 
         return new ArrayList<>(List.of(
@@ -36,5 +57,10 @@ public class AppConfig {
                 new Product("도드람 직화 돼지곱창", 14900, "믿고 못먹는(?) 도드람 돼지곱창", 300),
                 new Product("초밥 50pcs", 34900, "가성비 하나 없는(?)초밥 50피스", 500)
         ));
+    }
+
+    public AdminAuthentication getAdminAuthentication() {
+
+        return new AdminAuthentication("admin1234");
     }
 }
