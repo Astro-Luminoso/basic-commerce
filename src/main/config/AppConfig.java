@@ -6,9 +6,17 @@ import main.service.AdminAuthentication;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 앱 실행하기 위한 설정 클래스
+ */
 public class AppConfig {
 
-    
+    /**
+     * 리스트 형태의 전자제품 상품들을 반환
+     * 프로그램 시작 단계에서 호출되어서 사용되어야 함
+     *
+     * @return 리스트 형태의 전자제품 상품들
+     */
     public List<Product> getElectronicProducts() {
 
         return new ArrayList<>(List.of(
@@ -19,6 +27,12 @@ public class AppConfig {
         ));
     }
 
+    /**
+     * 리스트 형태의 의류 상품들을 반환
+     * 프로그램 시작 단계에서 호출되어서 사용되어야 함
+     *
+     * @return 리스트 형태의 의류 상품들
+     */
     public List<Product> getClothsProducts() {
 
         return new ArrayList<>(List.of(
@@ -30,6 +44,12 @@ public class AppConfig {
         ));
     }
 
+    /**
+     * 리스트 형태의 식품 상품들을 반환
+     * 프로그램 시작 단계에서 호출되어서 사용되어야 함
+     *
+     * @return 리스트 형태의 식품 상품들
+     */
     public List<Product> getFoodsProducts() {
 
         return new ArrayList<>(List.of(
