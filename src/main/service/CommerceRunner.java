@@ -5,7 +5,9 @@ import main.domain.entity.Cart;
 import main.domain.entity.Category;
 import main.domain.entity.Product;
 import main.dto.NewProductDetail;
+import main.utility.MembershipType;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class CommerceRunner {
@@ -34,7 +36,10 @@ public class CommerceRunner {
         Cart cart = sys.getCart();
         boolean proceedCheckout = io.processCheckout(cart.getTotalPrice(), cart.getCartList());
         if (proceedCheckout) {
-            io.confirmOrder(sys.getCart().getTotalPrice(), sys.getCart().getCartList());
+            List<MembershipType> membership = Arrays.asList(MembershipType.values());
+            int option = io.getMembershipOption(membership);
+            int discountedPrice = sys.getDiscountedPrice(option);
+            io.confirmOrder(discountedPrice, sys.getCart().getCartList());
             sys.processCheckout();
         }
     }
@@ -118,7 +123,10 @@ public class CommerceRunner {
         }
     }
 
-    private void navigateOption(int optionValue) {
+    private void navigateOption(int optionValue, int cartSize) {
+        if (cartSize == 0 && (optionValue == 4 || optionValue == 5))
+            throw new IndexOutOfBoundsException("올바른 번호를 입력해주세요.\n");
+
         switch (optionValue) {
             case 1, 2, 3 -> this.addCartSequence(optionValue);
             case 4 -> this.checkoutSequence();
@@ -133,7 +141,7 @@ public class CommerceRunner {
         while (true) {
             int mainOption = io.getMainOption(sys.getCategoriesList(), sys.getCart().getCartSize());
             if (mainOption == 0) break;
-            this.navigateOption(mainOption);
+            this.navigateOption(mainOption, sys.getCart().getCartSize());
         }
     }
 }

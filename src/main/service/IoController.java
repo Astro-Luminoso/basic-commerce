@@ -4,6 +4,7 @@ import main.domain.IterableOptions;
 import main.domain.entity.Category;
 import main.domain.entity.Product;
 import main.dto.NewProductDetail;
+import main.utility.MembershipType;
 
 import java.util.List;
 import java.util.Scanner;
@@ -17,7 +18,7 @@ public class IoController {
         this.sc = sc;
     }
 
-    private <T> T loopMethod(Supplier<T> actionMethod) {
+    private <T> T loopFunction(Supplier<T> actionMethod) {
         while (true) {
             try {
                 return actionMethod.get();
@@ -56,17 +57,16 @@ public class IoController {
             int optionSize = categories.size();
             if (cartSize > 0) {
                 // input upbound value must be updated due to 2 more options are available
-                System.out.printf("%d. 장바구니 확인%n", ++optionSize);
-                System.out.printf("%d. 주문 취소%n", ++optionSize);
-
+                System.out.println("4. 장바구니 확인\n5. 주문 취소");
+                optionSize += 2;
             }
-            System.out.printf("%d. 관리자 모드%n", ++optionSize);
+            System.out.println("6. 관리자 모드");
             System.out.println("0. 종료");
 
-            return this.getIntValue(String.format("^[0-%d]$", optionSize));
+            return this.getIntValue(String.format("^[0-%d]|6$", optionSize));
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public int getProductOption(String categoryName, List<Product> products) {
@@ -76,7 +76,7 @@ public class IoController {
             return this.getIntValue(String.format("^[0-%d]$", products.size()));
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public boolean processAddToCart(String productInfo, String productName) {
@@ -88,7 +88,7 @@ public class IoController {
             return this.getIntValue("0|1") == 1;
         };
 
-        boolean result = this.loopMethod(func);
+        boolean result = this.loopFunction(func);
         if (result) {
             System.out.printf("%s가 장바구니에 추가되었습니다.%n", productName);
         }
@@ -107,7 +107,17 @@ public class IoController {
             return this.getIntValue("0|1") == 1;
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
+    }
+
+    public int getMembershipOption(List<MembershipType> membershipOptions) {
+        Supplier<Integer> func = () -> {
+            System.out.println("멤버십 등급을 선택해주세요: ");
+            this.printList(membershipOptions);
+            return this.getIntValue(String.format("^[0-%d]$", membershipOptions.size()));
+        };
+
+        return this.loopFunction(func);
     }
 
     public void confirmOrder(int totalPrice, List<Product> cartList) {
@@ -130,7 +140,7 @@ public class IoController {
             return this.getIntValue(String.format("^[0-%d]", categories.size()));
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public int printAdminOption() {
@@ -140,7 +150,7 @@ public class IoController {
             return this.getIntValue("^[0-4]$");
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public String adminAuthorization() {
@@ -176,7 +186,7 @@ public class IoController {
             return new NewProductDetail(name, price, description, stockAmount);
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public void printDuplicationResult(boolean isUnique) {
@@ -198,7 +208,7 @@ public class IoController {
             return this.getIntValue("^[0-3]$");
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public NewProductDetail editProductDetail(int editOption, Product product) throws NumberFormatException {
@@ -228,7 +238,7 @@ public class IoController {
             default -> throw new IllegalArgumentException("올바른 번호를 입력해주세요.\n");
         }
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public boolean checkRemoveProduct(String productInfo) {
@@ -239,7 +249,7 @@ public class IoController {
             return this.getIntValue("0|1") == 1;
         };
 
-        return this.loopMethod(func);
+        return this.loopFunction(func);
     }
 
     public void confirmRemoveProduct(String productName) {

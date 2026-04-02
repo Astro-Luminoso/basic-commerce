@@ -4,6 +4,7 @@ import main.domain.entity.Cart;
 import main.domain.entity.Category;
 import main.domain.entity.Product;
 import main.dto.NewProductDetail;
+import main.utility.MembershipType;
 
 import java.util.List;
 
@@ -66,6 +67,12 @@ public class CommerceSystem {
     public void addProductToCart(Product product) {
 
         cart.addProduct(product);
+    }
+
+    public int getDiscountedPrice(int membershipOption) {
+        MembershipType membership = MembershipType.values()[--membershipOption];
+
+        return membership.calculateDiscountedPrice(cart.getTotalPrice());
     }
 
     public void processCheckout() {
