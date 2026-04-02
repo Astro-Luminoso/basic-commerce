@@ -1,6 +1,8 @@
 package main.utility;
 
-public enum MembershipType {
+import main.domain.IterableOptions;
+
+public enum MembershipType implements IterableOptions {
     BRONZE ("0%", 100),
     SILVER ("5%", 95),
     GOLD ("10%", 90),
@@ -14,12 +16,12 @@ public enum MembershipType {
         this.calculateValue = calculateValue;
     }
 
-    public String getPercentage() {
-        return percentage;
-    }
-
     public int calculateDiscountedPrice(int price) {
 
         return (price * this.calculateValue / 100) / 10 * 10;   // truncate ones digit
+    }
+
+    public String getInfo() {
+        return String.format("%s: %s할인", this.name(), this.percentage);
     }
 }
