@@ -18,7 +18,7 @@ public enum MembershipType implements IterableOptions {
 
     public int calculateDiscountedPrice(int price) {
 
-        return (price * this.calculateValue / 100) / 10 * 10;   // truncate ones digit
+        return (price * this.calculateValue / 100) / 10 * 10;   // drop ones digit
     }
 
     public String getInfo() {
