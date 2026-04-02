@@ -6,7 +6,6 @@ import main.domain.entity.Product;
 import main.dto.NewProductDetail;
 import main.utility.MembershipType;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class CommerceSystem {
@@ -68,11 +67,6 @@ public class CommerceSystem {
     public void addProductToCart(Product product) {
 
         cart.addProduct(product);
-    }
-
-    public List<String> getMembershipOption() {
-
-        return Arrays.stream(MembershipType.values()).map(Enum::name).toList();
     }
 
     public int getDiscountedPrice(int membershipOption) {
