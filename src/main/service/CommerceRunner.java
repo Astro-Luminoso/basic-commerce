@@ -34,7 +34,10 @@ public class CommerceRunner {
         Cart cart = sys.getCart();
         boolean proceedCheckout = io.processCheckout(cart.getTotalPrice(), cart.getCartList());
         if (proceedCheckout) {
-            io.confirmOrder(sys.getCart().getTotalPrice(), sys.getCart().getCartList());
+            List<String> membership = sys.getMembershipOption();
+            int option = io.getMembershipOption(membership);
+            int discountedPrice = sys.getDiscountedPrice(option);
+            io.confirmOrder(discountedPrice, sys.getCart().getCartList());
             sys.processCheckout();
         }
     }

@@ -36,6 +36,14 @@ public class IoController {
         }
     }
 
+    private void printStringList(List<String> lists) {
+        if (!lists.isEmpty()) {
+            for (int i =0; i<lists.size(); i++) {
+                System.out.printf("%d. %s%n", i + 1, lists.get(i));
+            }
+        }
+    }
+
     private int getIntValue(String regex) {
         String value = sc.nextLine();
         if (!value.matches(regex))
@@ -105,6 +113,17 @@ public class IoController {
             System.out.printf("%,d원%n%n", totalPrice);
             System.out.println("1.주문 확정             0.취소");
             return this.getIntValue("0|1") == 1;
+        };
+
+        return this.loopMethod(func);
+    }
+
+    public int getMembershipOption(List<String> membershipOptions) {
+        Supplier<Integer> func = () -> {
+            System.out.println("멤버십 등급을 선택해주세요: ");
+            this.printStringList(membershipOptions);
+            System.out.println("0. 뒤로가기");
+            return this.getIntValue(String.format("^[0-%d]", membershipOptions.size()));
         };
 
         return this.loopMethod(func);
