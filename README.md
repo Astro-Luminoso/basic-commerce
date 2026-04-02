@@ -130,9 +130,6 @@ classDiagram
 
 	Main --> AppConfig
 	Main --> CommerceSystem
-	Main --> AdminAuthentication
-	Main --> IoController
-	Main --> CommerceRunner
 	CommerceRunner --> CommerceSystem
 	CommerceRunner --> AdminAuthentication
 	CommerceRunner --> IoController
